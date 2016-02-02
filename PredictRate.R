@@ -7,9 +7,7 @@ GSPC_data <- as.data.frame(get.hist.quote(instrument ="INFY.NS", start = start_d
 #write.table(GSPC_data,file = "STOCKDATA.csv",sep="," ,row.names =TRUE)
 
 date_range <- as.data.frame(row.names(GSPC_data))
-normal <- function(data){
-        (data - min(data,na.rm = TRUE))/(max(data,na.rm=TRUE) - min(data,na.rm=TRUE))
-}
+
 
 Open_data <- (GSPC_data$Open)
 Close_data <- (GSPC_data$Close)
