@@ -14,23 +14,22 @@ library (zoo)
 library (quantmod)
 
 ui <- fluidPage(
-        titlePanel(title = "Stock Prediction Model"),
+        titlePanel(title = "Close Rate Prediction"),
         
         sidebarLayout(
-                sidebarPanel( helpText("Select a stock to examine. 
-                                       Information will be collected from yahoo finance."),
+                sidebarPanel( helpText("Stock information will be gathered using yahoo finance."),
                               
                               
                               dateRangeInput("dates", 
                                              "Date range",
-                                             start = "2013-01-01", 
+                                             start = "2010-01-01", 
                                              end = as.character(Sys.Date())),
                               
                               br(),
                               br(),
                               
                               actionButton(inputId = "go",
-                                           label = "Predict")
+                                           label = "PredictClosingRate")
                 ),
                 mainPanel(
                         plotOutput("plot"),
@@ -45,7 +44,7 @@ ui <- fluidPage(
 server <- function(input, output){
         
         output$plot <- renderPlot({
-                data <- getSymbols(code_stock, src = "yahoo", 
+                data <- getSymbols(symbol, src = "yahoo", 
                                    from = input$dates[1],
                                    to = input$dates[2],
                                    auto.assign = FALSE)
@@ -55,7 +54,7 @@ server <- function(input, output){
         })
         
         data1 <- eventReactive(input$go, Close_rate)
-        output$text_form <- renderText({paste("The Closing Rate for ",Sys.Date(),"will be around: ",data1())})
+        output$text_form <- renderText({paste("The Closing Rate for ",Sys.Date(),"might be around: ",data1())})
 }
 
 shinyApp(ui = ui, server = server)
