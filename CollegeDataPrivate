@@ -1,0 +1,57 @@
+# Data
+install.packages('ISLR')
+library(ISLR)
+print(head(college,2))
+print(head(College,2))
+
+# Preproc
+maxs <-apply(College[,2:18],2,max)
+mins <-apply(College[,2:18],2,min)
+maxs
+print(head(College,2))
+mins
+
+scaled.data <- as.data.frame(scale(College[,2:18],center=mins,scale=maxs -mins))
+print(head(scaled.data,2))
+
+# Conv Yes/No to 0,1
+Private = as.numeric(College$Private) -1
+data = cbind(Private,scaled.data)
+head data
+head (data,2)
+library(caTools)
+set.seed(101)
+
+# Split Train,Test data
+split = sample.split(data$Private,SplitRatio = 0.70)
+train = subset(data,split ==TRUE)
+test = subset(data,split==FALSE)
+nrow(data)
+nrow(train)
+nrow(test)
+
+# Create a function (can't do the y~ all features)for neuralnet function
+feats <- names(scaled.data)
+f <- paste(feats,collapse = '+')
+f <- paste('Private ~',f)
+f <- as.formula(f)
+f
+
+install.packages('neuralnet')
+library(neuralnet)
+nn <- neuralnet(f,data,hidden=c(10,10,10),linear.output=FALSE)
+
+# predict & evaluate
+predicted.nn.values <- compute(nn,test[,2:18])
+print(head(predicted.nn.values,2))
+print(head(predicted.nn.values$net.result))
+predicted.nn.values$net.result <- sapply(predicted.nn.values$net.result,round,digits=0)
+print(head(predicted.nn.values$net.result))
+table(test$Private,predicted.nn.values$net.result)
+  
+      0   1
+  0  62   2
+  1   0 169
+  
+# visualise
+plot(nn)
